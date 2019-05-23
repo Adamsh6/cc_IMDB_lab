@@ -4,51 +4,52 @@ require_relative('../db/sql_runner')
 
 class Movie
 
-  attr_accessor :title, :genre
+  attr_accessor :title, :genre, :budget
   attr_reader :id
 
   def initialize(options)
-    @id = options['id'] if options['id']
+    @id = options['id'].to_i if options['id']
     @title = options['title'] 
 @genre = options['genre'] 
+@budget = options['budget'] 
 
   end
 
   def save
-    sql = 'INSERT INTO movie (title, genre) VALUES ($1, $2) RETURNING id'
-    values = [@title, @genre]
+    sql = 'INSERT INTO movies (title, genre, budget) VALUES ($1, $2, $3) RETURNING id'
+    values = [@title, @genre, @budget]
     result = SqlRunner.run(sql, values)
     @id = result[0]['id']
   end
 
   def update
-    sql = 'UPDATE movie SET (title, genre) = ($1, $2) WHERE id = $3'
-    values = [@title, @genre, @id]
+    sql = 'UPDATE movies SET (title, genre, budget) = ($1, $2, $3) WHERE id = $4'
+    values = [@title, @genre, @budget, @id]
     SqlRunner.run(sql, values)
   end
 
   def delete
-    sql = "DELETE FROM movie WHERE id = $1"
+    sql = "DELETE FROM movies WHERE id = $1"
     values = [@id]
     SqlRunner.run(sql, values)
   end
 
   def self.find(id)
-    sql = 'SELECT * FROM movie WHERE id = $1'
+    sql = 'SELECT * FROM movies WHERE id = $1'
     values = [id]
     result = SqlRunner.run(sql, values)
     return Movie.new(result[0])
   end
 
   def self.all
-    sql = 'SELECT title, genre FROM movie'
+    sql = 'SELECT title, genre, budget FROM movies'
     result = SqlRunner.run(sql)
     return self.map_items(result)
     # return result.map{ |item| Movie.new(item) }
   end
 
   def self.delete_all
-    sql = "DELETE FROM movie"
+    sql = "DELETE FROM movies"
     result = SqlRunner.run(sql)
   end
 
