@@ -58,7 +58,7 @@ casting2 = Casting.new({
             })
             casting7 = Casting.new({
               'fee' => 28,
-              'star_id' => star4.id,
+              'star_id' => star5.id,
               'movie_id' => movie3.id
               })
 casting1.save
