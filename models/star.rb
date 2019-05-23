@@ -9,8 +9,8 @@ class Star
 
   def initialize(options)
     @id = options['id'].to_i if options['id']
-    @first_name = options['first_name'] 
-@last_name = options['last_name'] 
+    @first_name = options['first_name']
+@last_name = options['last_name']
 
   end
 
@@ -31,6 +31,17 @@ class Star
     sql = "DELETE FROM stars WHERE id = $1"
     values = [@id]
     SqlRunner.run(sql, values)
+  end
+
+  def movies
+    sql = "SELECT * FROM movies
+          INNER JOIN castings
+          ON castings.movie_id = movies.id
+          WHERE castings.star_id = $1"
+    values = [@id]
+    movies = SqlRunner.run(sql, values)
+    movies_array = movies.map{|movie| Movie.new(movie)}
+    return movies_array
   end
 
   def self.find(id)
